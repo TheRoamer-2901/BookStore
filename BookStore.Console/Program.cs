@@ -11,7 +11,16 @@ var bookStoreManager = serviceProvider.GetService<IBookStoreManager>();
 
 if (bookStoreManager is not null)
 {
-    bookStoreManager.GetAllBooks();
+    foreach (var book in bookStoreManager.GetAllBooks())
+    {
+        Console.WriteLine($@"
+        Id: {book.Id}
+        Title: {book.Title}
+        Description: {book.Description}
+        Author: {book.Author}
+        Year: {book.Year}
+        ");
+    }
 }
 else
 {

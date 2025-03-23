@@ -1,9 +1,17 @@
 using BookStore.Domain;
+using BookStore.Persistence;
 
 namespace BookStore.Service;
 
 public class BookStoreManager : IBookStoreManager
 {
+    private readonly IBookStoreRepository _bookStoreRepository;
+
+    public BookStoreManager(IBookStoreRepository bookStoreRepository)
+    {
+        _bookStoreRepository = bookStoreRepository;
+    }
+
     public void AddBook(Book book)
     {
         throw new NotImplementedException();
@@ -11,7 +19,7 @@ public class BookStoreManager : IBookStoreManager
 
     public void UpdateBook(Book book)
     {
-        throw new NotImplementedException();
+        _bookStoreRepository.Update(book);
     }
 
     public void DeleteBook(Guid id)
@@ -26,7 +34,6 @@ public class BookStoreManager : IBookStoreManager
 
     public List<Book> GetAllBooks()
     {
-        Console.WriteLine("Retrieving all books...");
-        return [];
+        return _bookStoreRepository.GetAll();
     }
 }
