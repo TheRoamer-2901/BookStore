@@ -1,3 +1,4 @@
+using BookStore.Contract;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BookStore.Service;

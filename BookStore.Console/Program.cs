@@ -1,4 +1,5 @@
-﻿using BookStore.Service;
+﻿using BookStore.Contract;
+using BookStore.Service;
 using BookStore.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,3 +1,5 @@
+using BookStore.Contract;
+using BookStore.Contract.DTOs;
 using BookStore.Domain;
 using BookStore.Persistence;
 
@@ -12,14 +14,14 @@ public class BookStoreManager : IBookStoreManager
         _bookStoreRepository = bookStoreRepository;
     }
 
-    public void AddBook(Book book)
+    public void AddBook(BookDto book)
     {
-        _bookStoreRepository.Add(book);
+        _bookStoreRepository.Add(ToBookDomain(book));
     }
 
-    public void UpdateBook(Book book)
+    public void UpdateBook(BookDto book)
     {
-        _bookStoreRepository.Update(book);
+        _bookStoreRepository.Update(ToBookDomain(book));
     }
 
     public void DeleteBook(Guid id)
@@ -27,13 +29,39 @@ public class BookStoreManager : IBookStoreManager
         _bookStoreRepository.Delete(id);
     }
 
-    public Book? GetBookById(Guid id)
+    public BookDto? GetBookById(Guid id)
     {
-        return _bookStoreRepository.GetById(id);
+        var book = _bookStoreRepository.GetById(id);
+        return book is not null ? ToBookDto(book) : null;
     }
 
-    public List<Book> GetAllBooks()
+    public List<BookDto> GetAllBooks()
     {
-        return _bookStoreRepository.GetAll();
+        return _bookStoreRepository.GetAll()
+            .Select(ToBookDto)
+            .ToList();
+    }
+
+    private Book ToBookDomain(BookDto bookDto)
+    {
+        return new Book
+        {
+            Id = bookDto.Id,
+            Title = bookDto.Title,
+            Author = bookDto.Author,
+            Description = bookDto.Description,
+            Year = bookDto.Year
+        };
+    }
+
+    private BookDto ToBookDto(Book book)
+    {
+        return new BookDto(
+            book.Id,
+            book.Title,
+            book.Author,
+            book.Description,
+            book.Year
+        );
     }
 }
