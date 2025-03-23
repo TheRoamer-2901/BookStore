@@ -6,6 +6,7 @@ namespace BookStore.Persistence;
 public class BookStoreRepository : IBookStoreRepository
 {
     private const string FilePath = @"D:\projects\BookStore\BookStore.Persistence\books.json";
+    private string TempFilePath => FilePath.Replace(".json", ".tmp.json");
 
     public BookStoreRepository()
     {
@@ -13,40 +14,65 @@ public class BookStoreRepository : IBookStoreRepository
 
     public void Add(Book book)
     {
-        throw new NotImplementedException();
+        var books = LoadBooks().ToList();
+        books.Add(book);
+        WriteBooksToFile(books, FilePath);
+    }
+
+    private static void WriteBooksToFile(List<Book> books, string filePath)
+    {
+        using var writer = new StreamWriter(filePath, false);
+        
+        writer.WriteLine("[");
+
+        for (int i = 0; i < books.Count; i++)
+        {
+            string serializedBook = $"  {JsonSerializer.Serialize(books[i])}";
+
+            if (i < books.Count - 1)
+            {
+                serializedBook += ",";
+            }
+
+            writer.WriteLine(serializedBook);
+        }
+
+        writer.WriteLine("]");
     }
 
     public void Update(Book updatedBook)
     {
-        string tempFile = FilePath.Replace(".json", ".tmp.json");
-        bool updated = false;
-        using var writer = new StreamWriter(tempFile);
-
-        writer.WriteLine("[");
-        foreach (var book in LoadBooks())
-        {
-            var bookToWrite = book.Id == updatedBook.Id ? updatedBook : book;
-            writer.WriteLine($"    {JsonSerializer.Serialize(bookToWrite)},");
-        
-            if (book.Id == updatedBook.Id)
-            {
-                updated = true;
-            }
-        }
-        writer.WriteLine("]");
-
-        if (!updated)
+        var books = GetAll();
+        var book = books.FirstOrDefault(b => b.Id == updatedBook.Id);
+    
+        if (book is null)
         {
             throw new InvalidOperationException("Book not found.");
         }
-        writer.Close();
+
+        var updatedBooks = books.Select(b => b.Id != updatedBook.Id ? b : updatedBook).ToList();
+
+        WriteBooksToFile(updatedBooks, TempFilePath);
+
         File.Delete(FilePath);
-        File.Move(tempFile, FilePath);
+        File.Move(TempFilePath, FilePath);
     }
 
     public void Delete(Guid id)
     {
-        throw new NotImplementedException();
+        var books = GetAll();
+        var bookToDelete = books.FirstOrDefault(b => b.Id == id);
+
+        if (bookToDelete is null)
+        {
+            throw new InvalidOperationException("Book not found.");
+        }
+
+        var updatedBooks = books.Where(b => b.Id != id).ToList();
+
+        WriteBooksToFile(updatedBooks, TempFilePath);
+
+        OverwriteRootFile(FilePath, TempFilePath);
     }
 
     public Book? GetById(Guid id)
@@ -60,7 +86,7 @@ public class BookStoreRepository : IBookStoreRepository
         return LoadBooks().ToList();
     }
 
-    public IEnumerable<Book> LoadBooks()
+    private IEnumerable<Book> LoadBooks()
     {
         if (!File.Exists(FilePath))
         {
@@ -85,5 +111,11 @@ public class BookStoreRepository : IBookStoreRepository
                 yield return book;
             }
         }
+    }
+    
+    private void OverwriteRootFile(string rootFilePath, string tempFilePath)
+    {
+        File.Delete(rootFilePath);
+        File.Move(tempFilePath, rootFilePath);
     }
 }

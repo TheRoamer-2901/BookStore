@@ -14,7 +14,7 @@ public class BookStoreManager : IBookStoreManager
 
     public void AddBook(Book book)
     {
-        throw new NotImplementedException();
+        _bookStoreRepository.Add(book);
     }
 
     public void UpdateBook(Book book)
@@ -24,12 +24,12 @@ public class BookStoreManager : IBookStoreManager
 
     public void DeleteBook(Guid id)
     {
-        throw new NotImplementedException();
+        _bookStoreRepository.Delete(id);
     }
 
     public Book? GetBookById(Guid id)
     {
-        throw new NotImplementedException();
+        return _bookStoreRepository.GetById(id);
     }
 
     public List<Book> GetAllBooks()
