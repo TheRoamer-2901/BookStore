@@ -12,7 +12,7 @@ var bookStoreManager = serviceProvider.GetService<IBookStoreManager>();
 
 if (bookStoreManager is not null)
 {
-    foreach (var book in bookStoreManager.GetAllBooks())
+    foreach (var book in await bookStoreManager.GetAllBooksAsync())
     {
         Console.WriteLine($@"
         Id: {book.Id}

@@ -14,54 +14,30 @@ public class BookStoreManager : IBookStoreManager
         _bookStoreRepository = bookStoreRepository;
     }
 
-    public void AddBook(BookDto book)
+
+    public async Task AddBookAsync(Book book, CancellationToken cancellationToken = default)
     {
-        _bookStoreRepository.Add(ToBookDomain(book));
+        await _bookStoreRepository.AddAsync(book, cancellationToken);
     }
 
-    public void UpdateBook(BookDto book)
+    public async Task UpdateBookAsync(Book book, CancellationToken cancellationToken = default)
     {
-        _bookStoreRepository.Update(ToBookDomain(book));
+        await _bookStoreRepository.UpdateAsync(book, cancellationToken);
     }
 
-    public void DeleteBook(Guid id)
+    public async Task DeleteBookAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        _bookStoreRepository.Delete(id);
+        await _bookStoreRepository.DeleteAsync(id, cancellationToken);
     }
 
-    public BookDto? GetBookById(Guid id)
-    {
-        var book = _bookStoreRepository.GetById(id);
-        return book is not null ? ToBookDto(book) : null;
+    public async Task<Book> GetBookByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    { 
+        return await _bookStoreRepository.GetByIdAsync(id, cancellationToken);
     }
 
-    public List<BookDto> GetAllBooks()
+    public async Task<IList<Book>> GetAllBooksAsync(CancellationToken cancellationToken = default)
     {
-        return _bookStoreRepository.GetAll()
-            .Select(ToBookDto)
+        return (await _bookStoreRepository.GetAllAsync(cancellationToken))
             .ToList();
-    }
-
-    private Book ToBookDomain(BookDto bookDto)
-    {
-        return new Book
-        {
-            Id = bookDto.Id,
-            Title = bookDto.Title,
-            Author = bookDto.Author,
-            Description = bookDto.Description,
-            Year = bookDto.Year
-        };
-    }
-
-    private BookDto ToBookDto(Book book)
-    {
-        return new BookDto(
-            book.Id,
-            book.Title,
-            book.Author,
-            book.Description,
-            book.Year
-        );
     }
 }

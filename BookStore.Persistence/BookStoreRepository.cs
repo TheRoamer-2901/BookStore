@@ -7,23 +7,20 @@ public class BookStoreRepository : IBookStoreRepository
 {
     private const string FilePath = @"D:\projects\BookStore\BookStore.Persistence\books.json";
     private string TempFilePath => FilePath.Replace(".json", ".tmp.json");
-
-    public BookStoreRepository()
+    
+    public async Task AddAsync(Book book, CancellationToken cancellationToken = default)
     {
-    }
-
-    public void Add(Book book)
-    {
-        var books = LoadBooks().ToList();
+        var books = (await LoadBooksAsync()).ToList();
         books.Add(book);
-        WriteBooksToFile(books, FilePath);
+        await WriteBooksToFileAsync(books, FilePath, cancellationToken);
     }
 
-    private static void WriteBooksToFile(List<Book> books, string filePath)
+    private async Task WriteBooksToFileAsync(List<Book> books, string filePath,
+        CancellationToken cancellationToken = default)
     {
-        using var writer = new StreamWriter(filePath, false);
+        await using var writer = new StreamWriter(filePath, false);
         
-        writer.WriteLine("[");
+        await writer.WriteLineAsync("[");
 
         for (int i = 0; i < books.Count; i++)
         {
@@ -34,15 +31,15 @@ public class BookStoreRepository : IBookStoreRepository
                 serializedBook += ",";
             }
 
-            writer.WriteLine(serializedBook);
+            await writer.WriteLineAsync(serializedBook);
         }
 
-        writer.WriteLine("]");
+        await writer.WriteLineAsync("]");
     }
 
-    public void Update(Book updatedBook)
+    public async Task UpdateAsync(Book updatedBook, CancellationToken cancellationToken = default)
     {
-        var books = GetAll();
+        var books = await GetAllAsync();
         var book = books.FirstOrDefault(b => b.Id == updatedBook.Id);
     
         if (book is null)
@@ -52,15 +49,15 @@ public class BookStoreRepository : IBookStoreRepository
 
         var updatedBooks = books.Select(b => b.Id != updatedBook.Id ? b : updatedBook).ToList();
 
-        WriteBooksToFile(updatedBooks, TempFilePath);
+        await WriteBooksToFileAsync(updatedBooks, TempFilePath, cancellationToken);
 
         File.Delete(FilePath);
         File.Move(TempFilePath, FilePath);
     }
 
-    public void Delete(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var books = GetAll();
+        var books = await GetAllAsync();
         var bookToDelete = books.FirstOrDefault(b => b.Id == id);
 
         if (bookToDelete is null)
@@ -70,33 +67,34 @@ public class BookStoreRepository : IBookStoreRepository
 
         var updatedBooks = books.Where(b => b.Id != id).ToList();
 
-        WriteBooksToFile(updatedBooks, TempFilePath);
-
+        await WriteBooksToFileAsync(updatedBooks, TempFilePath, cancellationToken);
         OverwriteRootFile(FilePath, TempFilePath);
     }
 
-    public Book? GetById(Guid id)
+    public async Task<Book?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var books = LoadBooks();
+        var books = await LoadBooksAsync(cancellationToken);
         return books.FirstOrDefault(x => x.Id == id);
     }
 
-    public List<Book> GetAll()
+    public async Task<IList<Book>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return LoadBooks().ToList();
+        return (await LoadBooksAsync(cancellationToken)).ToList();
     }
 
-    private IEnumerable<Book> LoadBooks()
+    private async Task<IEnumerable<Book>> LoadBooksAsync(CancellationToken cancellationToken = default)
     {
         if (!File.Exists(FilePath))
         {
-            yield break;
+            return [];
         }
+
+        var books = new List<Book>();
 
         using var reader = new StreamReader(FilePath);
         string? line;
 
-        while ((line = reader.ReadLine()) != null)
+        while ((line = await reader.ReadLineAsync(cancellationToken)) != null)
         {
             line = line.Trim();
             if (line == "[" || line == "]") continue;
@@ -108,9 +106,11 @@ public class BookStoreRepository : IBookStoreRepository
             var book = JsonSerializer.Deserialize<Book>(line);
             if (book != null)
             {
-                yield return book;
+                books.Add(book);
             }
         }
+        
+        return books;
     }
     
     private void OverwriteRootFile(string rootFilePath, string tempFilePath)
