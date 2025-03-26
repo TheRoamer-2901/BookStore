@@ -2,6 +2,7 @@ using BookStore.Contract;
 using BookStore.Contract.DTOs;
 using BookStore.Domain;
 using BookStore.Persistence;
+using Serilog;
 
 namespace BookStore.Service;
 

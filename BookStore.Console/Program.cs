@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using BookStore.Common;
 using BookStore.Contract;
 using BookStore.Contract.DTOs;
 using BookStore.Domain;
 using BookStore.Service;
 using BookStore.Persistence;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 var serviceProvider = new ServiceCollection()
+    .RegisterCommonServices()
     .RegisterContractLayer()
     .RegisterServiceLayer()
     .RegisterPersistenceLayer()
@@ -18,6 +21,8 @@ var bookStoreManager = serviceProvider.GetService<IBookStoreManager>();
 
 if (bookStoreManager is not null)
 {
+    Log.Information("App started successfully");
+    
     var newBookDto = new BookDto(
         Guid.NewGuid(),
         "The Pragmatic Programmer",
@@ -40,6 +45,8 @@ if (bookStoreManager is not null)
 }
 else
 {
-    Console.WriteLine("Cannot register the required service!!!");
+    Log.Error("Cannot register the required service!!!");
 }
+
+Log.CloseAndFlush();
 
