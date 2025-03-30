@@ -1,18 +1,27 @@
-﻿using AutoMapper;
+﻿using System.Text.RegularExpressions;
+using AutoMapper;
 using BookStore.Common;
 using BookStore.Contract;
 using BookStore.Contract.DTOs;
 using BookStore.Domain;
 using BookStore.Service;
 using BookStore.Persistence;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+
+var configPath = Regex.Replace(AppContext.BaseDirectory, "(Console|Api)", "Common");
+// Load configuration
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(configPath)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
 
 var serviceProvider = new ServiceCollection()
     .RegisterCommonServices()
     .RegisterContractLayer()
     .RegisterServiceLayer()
-    .RegisterPersistenceLayer()
+    .RegisterPersistenceLayer(configuration)
     .BuildServiceProvider();
 
 var mapper = serviceProvider.GetRequiredService<IMapper>();

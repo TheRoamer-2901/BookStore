@@ -1,18 +1,25 @@
 ﻿using System.Text.Json;
+using BookStore.Common;
 using BookStore.Domain;
+using Microsoft.Extensions.Options;
 
 namespace BookStore.Persistence;
 
 public class BookStoreRepository : IBookStoreRepository
 {
-    private const string FilePath = @"D:\projects\BookStore\BookStore.Persistence\books.json";
-    private string TempFilePath => FilePath.Replace(".json", ".tmp.json");
+    private readonly string _filePath;
+    private string TempFilePath => _filePath.Replace(".json", ".tmp.json");
+
+    public BookStoreRepository(IOptions<BookStoreConfig> config)
+    {
+        _filePath = config.Value.FilePath;
+    }
     
     public async Task AddAsync(Book book, CancellationToken cancellationToken = default)
     {
-        var books = (await LoadBooksAsync()).ToList();
+        var books = (await LoadBooksAsync(cancellationToken)).ToList();
         books.Add(book);
-        await WriteBooksToFileAsync(books, FilePath, cancellationToken);
+        await WriteBooksToFileAsync(books, _filePath, cancellationToken);
     }
 
     private async Task WriteBooksToFileAsync(List<Book> books, string filePath,
@@ -39,7 +46,7 @@ public class BookStoreRepository : IBookStoreRepository
 
     public async Task UpdateAsync(Book updatedBook, CancellationToken cancellationToken = default)
     {
-        var books = await GetAllAsync();
+        var books = await GetAllAsync(cancellationToken);
         var book = books.FirstOrDefault(b => b.Id == updatedBook.Id);
     
         if (book is null)
@@ -51,13 +58,13 @@ public class BookStoreRepository : IBookStoreRepository
 
         await WriteBooksToFileAsync(updatedBooks, TempFilePath, cancellationToken);
 
-        File.Delete(FilePath);
-        File.Move(TempFilePath, FilePath);
+        File.Delete(_filePath);
+        File.Move(TempFilePath, _filePath);
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var books = await GetAllAsync();
+        var books = await GetAllAsync(cancellationToken);
         var bookToDelete = books.FirstOrDefault(b => b.Id == id);
 
         if (bookToDelete is null)
@@ -68,7 +75,7 @@ public class BookStoreRepository : IBookStoreRepository
         var updatedBooks = books.Where(b => b.Id != id).ToList();
 
         await WriteBooksToFileAsync(updatedBooks, TempFilePath, cancellationToken);
-        OverwriteRootFile(FilePath, TempFilePath);
+        OverwriteRootFile(_filePath, TempFilePath);
     }
 
     public async Task<Book?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -84,14 +91,14 @@ public class BookStoreRepository : IBookStoreRepository
 
     private async Task<IEnumerable<Book>> LoadBooksAsync(CancellationToken cancellationToken = default)
     {
-        if (!File.Exists(FilePath))
+        if (!File.Exists(_filePath))
         {
             return [];
         }
 
         var books = new List<Book>();
 
-        using var reader = new StreamReader(FilePath);
+        using var reader = new StreamReader(_filePath);
         string? line;
 
         while ((line = await reader.ReadLineAsync(cancellationToken)) != null)
