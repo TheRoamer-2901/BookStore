@@ -2,7 +2,6 @@ using BookStore.Domain;
 using BookStore.Persistence;
 using BookStore.Service;
 using NSubstitute;
-using Serilog;
 using Shouldly;
 
 namespace BookStore.Test;
@@ -11,15 +10,13 @@ namespace BookStore.Test;
 public class BookStoreManagerTests
 {
     private IBookStoreRepository _mockRepository;
-    private ILogger _mockLogger;
     private BookStoreManager _bookStoreManager;
 
     [OneTimeSetUp]
     public void OneTimeSetup()
     {
         _mockRepository = Substitute.For<IBookStoreRepository>();
-        _mockLogger = Substitute.For<ILogger>();
-        _bookStoreManager = new BookStoreManager(_mockRepository, _mockLogger);
+        _bookStoreManager = new BookStoreManager(_mockRepository);
     }
 
     [Test]
