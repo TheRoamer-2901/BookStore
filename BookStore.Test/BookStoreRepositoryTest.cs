@@ -13,6 +13,7 @@ public class BookStoreRepositoryTests
     private string _testRootFilePath;
     private string _testFilePath;
     private IOptions<BookStoreConfig> _config;
+    private IList<Book> _books;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
@@ -20,7 +21,33 @@ public class BookStoreRepositoryTests
         _testRootFilePath = @"D:\projects\BookStore\BookStore.Test\books.test.json";
         _testFilePath = _testRootFilePath.Replace(".json", ".tmp.json");
         _config = new OptionsWrapper<BookStoreConfig>(new BookStoreConfig { FilePath = _testFilePath });
-        
+        _books =
+        [
+            new Book
+            {
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                Title = "Book 1",
+                Description = "Description 1",
+                Author = "Author 1",
+                Year = 2024
+            },
+            new Book
+            {
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                Title = "Book 2",
+                Description = "Description 2",
+                Author = "Author 2",
+                Year = 2024
+            },
+            new Book
+            {
+                Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                Title = "Book 3",
+                Description = "Description 3",
+                Author = "Author 3",
+                Year = 2025
+            }
+        ];
         _repository = new BookStoreRepository(_config);
     }
     
@@ -40,7 +67,7 @@ public class BookStoreRepositoryTests
     }
 
     [Test]
-    public async Task AddAsync_Should_Add_Book()
+    public async Task AddAsync_WhenCalled_ShouldAddBook()
     {
         // Arrange
         var bookId = Guid.NewGuid();
@@ -52,79 +79,65 @@ public class BookStoreRepositoryTests
             Author = "Author",
             Year = 2024
         };
-
+        var books = _books.ToList();
+        books.Add(book);
+    
         // Act
-        await _repository.AddAsync(book);
-
+        await _repository.AddAsync(books);
+    
         // Assert
-        var retrievedBook = await _repository.GetByIdAsync(bookId);
-        retrievedBook.ShouldNotBeNull();
-        retrievedBook.Id.ShouldBe(book.Id);
-        retrievedBook.Title.ShouldBe("Test Book");
+        var retrievedBooks = await _repository.GetAllAsync();
+        var addedBook = retrievedBooks.FirstOrDefault(x => x.Id == bookId);
+        retrievedBooks.Count.ShouldBe(4);
+        addedBook.ShouldNotBeNull();
+        addedBook.Id.ShouldBe(book.Id);
+        addedBook.Title.ShouldBe("Test Book");
     }
-
+    
     [Test]
-    public async Task UpdateAsync_Should_Update_Book()
+    public async Task UpdateAsync_WhenCalled_ShouldUpdateBook()
     {
         // Arrange
-        var bookId = Guid.NewGuid();
-        var book = new Book
-        {
-            Id = bookId,
-            Title = "Old Title",
-            Description = "Old Description",
-            Author = "Author",
-            Year = 2024
-        };
+        var books = _books.ToList();
+        var bookToUpdate = books.First();
     
-        await _repository.AddAsync(book);
-
-        var updatedBook = new Book
-        {
-            Id = bookId,
-            Title = "New Title",
-            Description = "New Description",
-            Author = "Author",
-            Year = 2024
-        };
+        bookToUpdate.Title = "New Title";
+        bookToUpdate.Description = "New Description";
+        bookToUpdate.Author = "Author";
+        bookToUpdate.Year = 2024;
 
         // Act
-        await _repository.UpdateAsync(updatedBook);
-        var fetchedBook = await _repository.GetByIdAsync(bookId);
+        await _repository.UpdateAsync(books);
+
 
         // Assert
-        fetchedBook.ShouldNotBeNull();
-        fetchedBook.Id.ShouldBe(bookId);
-        fetchedBook.Title.ShouldBe("New Title");
-        fetchedBook.Description.ShouldBe("New Description");
-        fetchedBook.Author.ShouldBe("Author");
-        fetchedBook.Year.ShouldBe(2024);
+        var updatedBook = await _repository.GetByIdAsync(bookToUpdate.Id);
+        updatedBook.ShouldNotBeNull();
+        updatedBook.Title.ShouldBe("New Title");
+        updatedBook.Description.ShouldBe("New Description");
+        updatedBook.Author.ShouldBe("Author");
+        updatedBook.Year.ShouldBe(2024);
     }
-
+    
     [Test]
     public async Task DeleteAsync_Should_Remove_Book()
     {
         // Arrange
-        var book = new Book
-        {
-            Id = Guid.NewGuid(),
-            Title = "Book to Delete",
-            Description = "Description",
-            Author = "Author",
-            Year = 2024
-        };
-        await _repository.AddAsync(book);
-
+        var bookToDeleteId = new Guid("11111111-1111-1111-1111-111111111111");
+        var books = _books.Where(x => x.Id != bookToDeleteId).ToList();
+    
         // Act
-        await _repository.DeleteAsync(book.Id);
-        var allBooks = await _repository.GetAllAsync();
-
+        await _repository.DeleteAsync(books);
+    
         // Assert
-        allBooks.ShouldNotContain(b => b.Id == book.Id);
+        var newBooks = await _repository.GetAllAsync();
+        newBooks.Count.ShouldBe(2);
+        newBooks.ShouldNotContain(b => b.Id == bookToDeleteId);
     }
 
+
     [Test]
-    public async Task GetByIdAsync_Should_Return_Correct_Book()
+    public async Task GetByIdAsync_WhenBookExist_ShouldReturnCorrectBook()
     {
         // Arrange
         var bookId = new Guid("11111111-1111-1111-1111-111111111111");
@@ -141,10 +154,9 @@ public class BookStoreRepositoryTests
     }
 
     [Test]
-    public async Task GetAllAsync_Should_Return_All_Books()
+    public async Task GetAllAsync_WhenCalled_ShouldReturnAllBooks()
     {
         // Arrange
-
         // Act
         var allBooks = await _repository.GetAllAsync();
 
