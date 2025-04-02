@@ -11,4 +11,10 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BookStore.Common\BookStore.Common.csproj" />
+      <ProjectReference Include="..\BookStore.Contract\BookStore.Contract.csproj" />
+      <ProjectReference Include="..\BookStore.Service\BookStore.Service.csproj" />
+    </ItemGroup>
+
 </Project>

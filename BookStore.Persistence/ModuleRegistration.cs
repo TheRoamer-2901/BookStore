@@ -1,4 +1,5 @@
 using BookStore.Common;
+using BookStore.Contract;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

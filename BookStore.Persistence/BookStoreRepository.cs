@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using BookStore.Common;
+using BookStore.Contract;
 using BookStore.Domain;
 using Microsoft.Extensions.Options;
 
@@ -15,14 +16,12 @@ public class BookStoreRepository : IBookStoreRepository
         _filePath = config.Value.FilePath;
     }
     
-    public async Task AddAsync(Book book, CancellationToken cancellationToken = default)
+    public async Task AddAsync(IList<Book> books, CancellationToken cancellationToken = default)
     {
-        var books = (await LoadBooksAsync(cancellationToken)).ToList();
-        books.Add(book);
         await WriteBooksToFileAsync(books, _filePath, cancellationToken);
     }
 
-    private async Task WriteBooksToFileAsync(List<Book> books, string filePath,
+    private async Task WriteBooksToFileAsync(IList<Book> books, string filePath,
         CancellationToken cancellationToken = default)
     {
         await using var writer = new StreamWriter(filePath, false);
@@ -44,37 +43,17 @@ public class BookStoreRepository : IBookStoreRepository
         await writer.WriteLineAsync("]");
     }
 
-    public async Task UpdateAsync(Book updatedBook, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(IList<Book> updatedBooks, CancellationToken cancellationToken = default)
     {
-        var books = await GetAllAsync(cancellationToken);
-        var book = books.FirstOrDefault(b => b.Id == updatedBook.Id);
-    
-        if (book is null)
-        {
-            throw new InvalidOperationException("Book not found.");
-        }
-
-        var updatedBooks = books.Select(b => b.Id != updatedBook.Id ? b : updatedBook).ToList();
-
         await WriteBooksToFileAsync(updatedBooks, TempFilePath, cancellationToken);
 
         File.Delete(_filePath);
         File.Move(TempFilePath, _filePath);
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(IList<Book> books, CancellationToken cancellationToken = default)
     {
-        var books = await GetAllAsync(cancellationToken);
-        var bookToDelete = books.FirstOrDefault(b => b.Id == id);
-
-        if (bookToDelete is null)
-        {
-            throw new InvalidOperationException("Book not found.");
-        }
-
-        var updatedBooks = books.Where(b => b.Id != id).ToList();
-
-        await WriteBooksToFileAsync(updatedBooks, TempFilePath, cancellationToken);
+        await WriteBooksToFileAsync(books, TempFilePath, cancellationToken);
         OverwriteRootFile(_filePath, TempFilePath);
     }
 
