@@ -1,4 +1,3 @@
-using BookStore.Contract.DTOs;
 using BookStore.Domain;
 
 namespace BookStore.Contract;

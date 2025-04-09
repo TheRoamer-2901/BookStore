@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
@@ -8,6 +9,7 @@ public static class ModuleRegistration
     public static IServiceCollection RegisterCommonServices(this IServiceCollection services)
     {
         services.AddLoggingConfig();
+        services.AddMappings();
         return services;
     }
 
@@ -22,5 +24,10 @@ public static class ModuleRegistration
             .WriteTo.File(logFilePath)
             .CreateLogger();
         services.AddSingleton(Log.Logger);
+    }
+
+    private static void AddMappings(this IServiceCollection services)
+    {
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
     }
 }

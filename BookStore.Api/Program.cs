@@ -16,7 +16,6 @@ builder.Configuration
 // Register all layers
 builder.Services
     .RegisterCommonServices()
-    .RegisterContractLayer()
     .RegisterServiceLayer()
     .RegisterPersistenceLayer(builder.Configuration);
 

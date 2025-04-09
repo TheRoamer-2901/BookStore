@@ -5,5 +5,9 @@
   {"Id":"73139c58-77b7-4e45-9309-7c041d6a780c","Title":"Refactoring","Description":"Improving the design of existing code.","Author":"Martin Fowler","Year":1999},
   {"Id":"e7f935a5-06d6-4cde-8ff5-8ad6f97c9152","Title":"Domain-Driven Design","Description":"Tackling complexity in the heart of software.","Author":"Eric Evans","Year":2003},
   {"Id":"9c0171b8-cc90-43eb-9e27-ea6c4344ecd1","Title":"Design Patterns","Description":"Elements of Reusable Object-Oriented Software.","Author":"Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides","Year":1994},
-  {"Id":"ae1b12c9-0f97-4967-ab68-1e5da5aebe13","Title":"The Pragmatic Programmer","Description":"A classic book on software development.","Author":"Andrew Hunt \u0026 David Thomas","Year":1999}
+  {"Id":"ae1b12c9-0f97-4967-ab68-1e5da5aebe13","Title":"The Pragmatic Programmer","Description":"A classic book on software development.","Author":"Andrew Hunt \u0026 David Thomas","Year":1999},
+  {"Id":"0fd8a954-8817-409e-9a62-5011a35e1cc8","Title":"The Pragmatic Programmer","Description":"A classic book on software development.","Author":"Andrew Hunt \u0026 David Thomas","Year":1999},
+  {"Id":"5676f3ec-16d8-48cf-bffe-bfce9d70889c","Title":"hello","Description":"string","Author":"string","Year":1920},
+  {"Id":"ac96473f-e01d-4682-bad3-af153b62e972","Title":"string","Description":"string","Author":"string","Year":1990},
+  {"Id":"248148b7-922f-40ab-a8e1-cbed3d171d7d","Title":"The Pragmatic Programmer","Description":"A classic book on software development.","Author":"Andrew Hunt \u0026 David Thomas","Year":1999}
 ]
