@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using BookStore.Api.Middlewares;
 using BookStore.Common;
 using BookStore.Contract;
 using BookStore.Persistence;
@@ -34,6 +35,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseBookStoreMiddlewares();
 
 app.UseHttpsRedirection();
 
