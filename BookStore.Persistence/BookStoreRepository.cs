@@ -18,37 +18,24 @@ public class BookStoreRepository : IBookStoreRepository
     
     public async Task AddAsync(IList<Book> books, CancellationToken cancellationToken = default)
     {
-        await WriteBooksToFileAsync(books, _filePath, cancellationToken);
+        await WriteBooksToFileAsync(books, TempFilePath, cancellationToken);
+        OverwriteRootFile(_filePath, TempFilePath);
     }
 
     private async Task WriteBooksToFileAsync(IList<Book> books, string filePath,
         CancellationToken cancellationToken = default)
     {
-        await using var writer = new StreamWriter(filePath, false);
-        
-        await writer.WriteLineAsync("[");
-
-        for (int i = 0; i < books.Count; i++)
+        await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+        await JsonSerializer.SerializeAsync(fileStream, books, new JsonSerializerOptions
         {
-            string serializedBook = $"  {JsonSerializer.Serialize(books[i])}";
-
-            if (i < books.Count - 1)
-            {
-                serializedBook += ",";
-            }
-
-            await writer.WriteLineAsync(serializedBook);
-        }
-
-        await writer.WriteLineAsync("]");
+            WriteIndented = true
+        }, cancellationToken);
     }
 
     public async Task UpdateAsync(IList<Book> updatedBooks, CancellationToken cancellationToken = default)
     {
         await WriteBooksToFileAsync(updatedBooks, TempFilePath, cancellationToken);
-
-        File.Delete(_filePath);
-        File.Move(TempFilePath, _filePath);
+        OverwriteRootFile(_filePath, TempFilePath);
     }
 
     public async Task DeleteAsync(IList<Book> books, CancellationToken cancellationToken = default)
@@ -75,28 +62,13 @@ public class BookStoreRepository : IBookStoreRepository
             return [];
         }
 
-        var books = new List<Book>();
-
-        using var reader = new StreamReader(_filePath);
-        string? line;
-
-        while ((line = await reader.ReadLineAsync(cancellationToken)) != null)
+        await using var fileStream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var books = await JsonSerializer.DeserializeAsync<List<Book>>(fileStream, new JsonSerializerOptions
         {
-            line = line.Trim();
-            if (line == "[" || line == "]") continue;
+            PropertyNameCaseInsensitive = true
+        }, cancellationToken);
 
-            if (line.EndsWith(","))
-            {
-                line = line[..^1];
-            }
-            var book = JsonSerializer.Deserialize<Book>(line);
-            if (book != null)
-            {
-                books.Add(book);
-            }
-        }
-        
-        return books;
+        return books ?? [];
     }
     
     private void OverwriteRootFile(string rootFilePath, string tempFilePath)
