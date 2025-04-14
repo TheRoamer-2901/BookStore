@@ -18,7 +18,7 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 var serviceProvider = new ServiceCollection()
-    .RegisterCommonServices()
+    .RegisterCommonServices(configuration)
     .RegisterServiceLayer()
     .RegisterPersistenceLayer(configuration)
     .BuildServiceProvider();

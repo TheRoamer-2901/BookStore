@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
@@ -6,23 +7,20 @@ namespace BookStore.Common;
 
 public static class ModuleRegistration
 {
-    public static IServiceCollection RegisterCommonServices(this IServiceCollection services)
+    public static IServiceCollection RegisterCommonServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddLoggingConfig();
+        services.AddLoggingConfig(configuration);
         services.AddMappings();
         return services;
     }
 
-    private static void AddLoggingConfig(this IServiceCollection services)
+    private static void AddLoggingConfig(this IServiceCollection services, IConfiguration configuration)
     {
-        var projectRoot =  Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)?.Parent?.Parent?.Parent?.Parent?.FullName ?? AppDomain.CurrentDomain.BaseDirectory;
-        var logFilePath = Path.Combine(projectRoot, "logs", "log.txt");
         Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
+            .ReadFrom.Configuration(configuration)
             .Enrich.FromLogContext()
-            .WriteTo.Console()
-            .WriteTo.File(logFilePath)
             .CreateLogger();
+        
         services.AddSingleton(Log.Logger);
     }
 
