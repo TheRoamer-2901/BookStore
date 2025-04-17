@@ -10,8 +10,14 @@ public static class ModuleRegistration
 {
     public static IServiceCollection RegisterPersistenceLayer(this IServiceCollection services, IConfiguration configuration)
     {
-        // RegisterFileRepository(services, configuration);
-        RegisterDbRepository(services, configuration);
+        if (configuration.GetValue<bool>("FeatureFlags:IsDbStorageEnabled"))
+        {
+            RegisterDbRepository(services, configuration);
+        }
+        else
+        {
+            RegisterFileRepository(services, configuration);
+        }
         return services;
     }
 
