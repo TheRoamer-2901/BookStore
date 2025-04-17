@@ -30,8 +30,9 @@ public class BookStoreManagerTests
     public async Task AddBookAsync_WhenBookExists_ShouldThrowException()
     {
         // Arrange
-        var book = new Book { Id = Guid.NewGuid() };
-        _bookStoreRepository.GetAllAsync(Arg.Any<CancellationToken>()).Returns(new List<Book> { book });
+        var bookId = Guid.NewGuid();
+        var book = new Book { Id = bookId };
+        _bookStoreRepository.GetByIdAsync(Arg.Is(bookId)).Returns(book);
 
         // Act
         var addBookAction = async () => await _bookStoreManager.AddBookAsync(book);
@@ -44,14 +45,14 @@ public class BookStoreManagerTests
     public async Task AddBookAsync_WhenBookDoesNotExist_ShouldAddBook()
     {
         // Arrange
+        _bookStoreRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((Book?)null);
         var book = new Book { Id = Guid.NewGuid() };
-        _bookStoreRepository.GetAllAsync(Arg.Any<CancellationToken>()).Returns(new List<Book>());
 
         // Act
         await _bookStoreManager.AddBookAsync(book);
 
         // Assert
-        await _bookStoreRepository.Received(1).AddAsync(Arg.Is<List<Book>>(b => b.Contains(book)), Arg.Any<CancellationToken>());
+        await _bookStoreRepository.Received(1).AddAsync(book, Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -72,15 +73,15 @@ public class BookStoreManagerTests
     public async Task UpdateBookAsync_WhenBookExists_ShouldUpdateBook()
     {
         // Arrange
-        var book = new Book { Id = Guid.NewGuid() };
-        var existingBooks = new List<Book> { book };
-        _bookStoreRepository.GetAllAsync(Arg.Any<CancellationToken>()).Returns(existingBooks);
+        var bookId = Guid.NewGuid();
+        var book = new Book { Id = bookId };
+        _bookStoreRepository.GetByIdAsync(Arg.Is(bookId)).Returns(book);
 
         // Act
         await _bookStoreManager.UpdateBookAsync(book);
 
         // Assert
-        await _bookStoreRepository.Received(1).UpdateAsync(Arg.Is<List<Book>>(b => b.Contains(book)), Arg.Any<CancellationToken>());
+        await _bookStoreRepository.Received(1).UpdateAsync(book, Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -101,15 +102,15 @@ public class BookStoreManagerTests
     public async Task DeleteBookAsync_WhenBookExists_ShouldDeleteBook()
     {
         // Arrange
-        var book = new Book { Id = Guid.NewGuid() };
-        var existingBooks = new List<Book> { book };
-        _bookStoreRepository.GetAllAsync(Arg.Any<CancellationToken>()).Returns(existingBooks);
+        var bookId = Guid.NewGuid();
+        var book = new Book { Id = bookId };
+        _bookStoreRepository.GetByIdAsync(Arg.Is(bookId)).Returns(book);
 
         // Act
         await _bookStoreManager.DeleteBookAsync(book.Id);
 
         // Assert
-        await _bookStoreRepository.Received(1).DeleteAsync(Arg.Is<List<Book>>(b => b.All(x => x != book)), Arg.Any<CancellationToken>());
+        await _bookStoreRepository.Received(1).DeleteAsync(book, Arg.Any<CancellationToken>());
     }
 
     [Test]

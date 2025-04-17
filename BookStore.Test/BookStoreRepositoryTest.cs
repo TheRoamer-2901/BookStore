@@ -79,11 +79,9 @@ public class BookStoreRepositoryTests
             Author = "Author",
             Year = 2024
         };
-        var books = _books.ToList();
-        books.Add(book);
     
         // Act
-        await _repository.AddAsync(books);
+        await _repository.AddAsync(book);
     
         // Assert
         var retrievedBooks = await _repository.GetAllAsync();
@@ -98,16 +96,14 @@ public class BookStoreRepositoryTests
     public async Task UpdateAsync_WhenCalled_ShouldUpdateBook()
     {
         // Arrange
-        var books = _books.ToList();
-        var bookToUpdate = books.First();
-    
+        var bookToUpdate = _books.First();
         bookToUpdate.Title = "New Title";
         bookToUpdate.Description = "New Description";
         bookToUpdate.Author = "Author";
         bookToUpdate.Year = 2024;
 
         // Act
-        await _repository.UpdateAsync(books);
+        await _repository.UpdateAsync(bookToUpdate);
 
 
         // Assert
@@ -124,10 +120,10 @@ public class BookStoreRepositoryTests
     {
         // Arrange
         var bookToDeleteId = new Guid("11111111-1111-1111-1111-111111111111");
-        var books = _books.Where(x => x.Id != bookToDeleteId).ToList();
+        var bookToDelete = _books.First(x => x.Id == bookToDeleteId);
     
         // Act
-        await _repository.DeleteAsync(books);
+        await _repository.DeleteAsync(bookToDelete);
     
         // Assert
         var newBooks = await _repository.GetAllAsync();
