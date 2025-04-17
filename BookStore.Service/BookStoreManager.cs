@@ -15,38 +15,32 @@ public class BookStoreManager : IBookStoreManager
 
     public async Task AddBookAsync(Book newBook, CancellationToken cancellationToken = default)
     {
-        var books = await _bookStoreRepository.GetAllAsync(cancellationToken);
-        var book = books.FirstOrDefault(x => x.Id == newBook.Id);
+        var book = await _bookStoreRepository.GetByIdAsync(newBook.Id, cancellationToken);
         if (book is not null)
         {
             throw new BookDuplicatedException(newBook.Id);
         }
-        books.Add(newBook);
-        await _bookStoreRepository.AddAsync(books, cancellationToken);
+        await _bookStoreRepository.AddAsync(newBook, cancellationToken);
     }
 
     public async Task UpdateBookAsync(Book bookToUpdate, CancellationToken cancellationToken = default)
     {
-        var books = await _bookStoreRepository.GetAllAsync(cancellationToken);
-        var book = books.FirstOrDefault(x => x.Id == bookToUpdate.Id);
+        var book = await _bookStoreRepository.GetByIdAsync(bookToUpdate.Id, cancellationToken);
         if (book is null)
         {
             throw new BookNotFoundException(bookToUpdate.Id);
         }
-        books = books.Select(b => b.Id == bookToUpdate.Id ? bookToUpdate : b).ToList();
-        await _bookStoreRepository.UpdateAsync(books, cancellationToken);
+        await _bookStoreRepository.UpdateAsync(bookToUpdate, cancellationToken);
     }
 
     public async Task DeleteBookAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var books = await _bookStoreRepository.GetAllAsync(cancellationToken);
-        var book = books.FirstOrDefault(x => x.Id == id);
+        var book = await _bookStoreRepository.GetByIdAsync(id, cancellationToken);
         if (book is null)
         {
             throw new BookNotFoundException(id);
         }
-        books = books.Where(x => x.Id != id).ToList();
-        await _bookStoreRepository.DeleteAsync(books, cancellationToken);
+        await _bookStoreRepository.DeleteAsync(book, cancellationToken);
     }
 
     public async Task<Book> GetBookByIdAsync(Guid id, CancellationToken cancellationToken = default)

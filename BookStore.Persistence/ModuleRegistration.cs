@@ -10,7 +10,7 @@ public static class ModuleRegistration
 {
     public static IServiceCollection RegisterPersistenceLayer(this IServiceCollection services, IConfiguration configuration)
     {
-        RegisterFileRepository(services, configuration);
+        // RegisterFileRepository(services, configuration);
         RegisterDbRepository(services, configuration);
         return services;
     }
@@ -21,7 +21,7 @@ public static class ModuleRegistration
 
         services.AddDbContext<BookStoreDbContext>(
             options => options.UseNpgsql(connectionString));
-        services.AddScoped<IBookStoreDbRepository, BookStoreDbRepository>();
+        services.AddScoped<IBookStoreRepository, BookStoreDbRepository>();
     }
 
     private static void RegisterFileRepository(IServiceCollection services, IConfiguration configuration)

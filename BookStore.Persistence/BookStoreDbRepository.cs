@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Persistence;
 
-public class BookStoreDbRepository : IBookStoreDbRepository
+public class BookStoreDbRepository : IBookStoreRepository
 {
     private readonly BookStoreDbContext _context;
 
@@ -21,16 +21,17 @@ public class BookStoreDbRepository : IBookStoreDbRepository
 
     public async Task UpdateAsync(Book book, CancellationToken cancellationToken = default)
     {
-        _context.Books.Update(book);
+        var existing = await _context.Books.FirstAsync(x => x.Id == book.Id, cancellationToken);
+        _context.Entry(existing).CurrentValues.SetValues(book);
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Book book, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Book bookToDelete, CancellationToken cancellationToken = default)
     {
-        _context.Books.Remove(book);
+        _context.Books.Remove(bookToDelete);
         await _context.SaveChangesAsync(cancellationToken);
     }
-
+    
     public async Task<Book?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Books.FirstOrDefaultAsync(b => b.Id == id, cancellationToken);

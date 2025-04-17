@@ -1,13 +1,86 @@
 [
-  {"Id":"b1a7aefb-4c57-4d0b-8e73-3e3b849bfa25","Title":"The Pragmatic Programmer","Description":"A book about software craftsmanship and best practices.","Author":"Andrew Hunt, David Thomas","Year":1999},
-  {"Id":"2f5282d1-b2f6-4e6c-8bc7-51b7a1d86c23","Title":"Clean Code","Description":"A handbook of agile software craftsmanship.","Author":"Robert C. Martin","Year":2008},
-  {"Id":"c369b9d5-6e48-48a9-a68b-2d1d571a5f9e","Title":"The Mythical Man-Month","Description":"Essays on software engineering and project management","Author":"Frederick P. Brooks Jr","Year":2007},
-  {"Id":"73139c58-77b7-4e45-9309-7c041d6a780c","Title":"Refactoring","Description":"Improving the design of existing code.","Author":"Martin Fowler","Year":1999},
-  {"Id":"e7f935a5-06d6-4cde-8ff5-8ad6f97c9152","Title":"Domain-Driven Design","Description":"Tackling complexity in the heart of software.","Author":"Eric Evans","Year":2003},
-  {"Id":"9c0171b8-cc90-43eb-9e27-ea6c4344ecd1","Title":"Design Patterns","Description":"Elements of Reusable Object-Oriented Software.","Author":"Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides","Year":1994},
-  {"Id":"ae1b12c9-0f97-4967-ab68-1e5da5aebe13","Title":"The Pragmatic Programmer","Description":"A classic book on software development.","Author":"Andrew Hunt \u0026 David Thomas","Year":1999},
-  {"Id":"0fd8a954-8817-409e-9a62-5011a35e1cc8","Title":"The Pragmatic Programmer","Description":"A classic book on software development.","Author":"Andrew Hunt \u0026 David Thomas","Year":1999},
-  {"Id":"ac96473f-e01d-4682-bad3-af153b62e972","Title":"string","Description":"string","Author":"string","Year":1990},
-  {"Id":"248148b7-922f-40ab-a8e1-cbed3d171d7d","Title":"The Pragmatic Programmer","Description":"A classic book on software development.","Author":"Andrew Hunt \u0026 David Thomas","Year":1999},
-  {"Id":"fbda02b8-e34a-401d-b006-64dec3e7a440","Title":"Pen \u0026 ink sketching 2nd edition","Description":"Teach all the basics about sketching with pen","Author":"William a","Year":2026}
+  {
+    "Id": "b1a7aefb-4c57-4d0b-8e73-3e3b849bfa25",
+    "Title": "The Pragmatic Programmer",
+    "Description": "A book about software craftsmanship and best practices.",
+    "Author": "Andrew Hunt, David Thomas",
+    "Year": 1999
+  },
+  {
+    "Id": "2f5282d1-b2f6-4e6c-8bc7-51b7a1d86c23",
+    "Title": "Clean Code",
+    "Description": "A handbook of agile software craftsmanship.",
+    "Author": "Robert C. Martin",
+    "Year": 2008
+  },
+  {
+    "Id": "c369b9d5-6e48-48a9-a68b-2d1d571a5f9e",
+    "Title": "The Mythical Man-Month",
+    "Description": "Essays on software engineering and project management",
+    "Author": "Frederick P. Brooks Jr",
+    "Year": 2007
+  },
+  {
+    "Id": "73139c58-77b7-4e45-9309-7c041d6a780c",
+    "Title": "Refactoring",
+    "Description": "Improving the design of existing code.",
+    "Author": "Martin Fowler",
+    "Year": 1999
+  },
+  {
+    "Id": "e7f935a5-06d6-4cde-8ff5-8ad6f97c9152",
+    "Title": "Domain-Driven Design",
+    "Description": "Tackling complexity in the heart of software.",
+    "Author": "Eric Evans",
+    "Year": 2003
+  },
+  {
+    "Id": "9c0171b8-cc90-43eb-9e27-ea6c4344ecd1",
+    "Title": "Design Patterns",
+    "Description": "Elements of Reusable Object-Oriented Software.",
+    "Author": "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides",
+    "Year": 1994
+  },
+  {
+    "Id": "ae1b12c9-0f97-4967-ab68-1e5da5aebe13",
+    "Title": "The Pragmatic Programmer",
+    "Description": "A classic book on software development.",
+    "Author": "Andrew Hunt \u0026 David Thomas",
+    "Year": 1999
+  },
+  {
+    "Id": "0fd8a954-8817-409e-9a62-5011a35e1cc8",
+    "Title": "The Pragmatic Programmer",
+    "Description": "A classic book on software development.",
+    "Author": "Andrew Hunt \u0026 David Thomas",
+    "Year": 1999
+  },
+  {
+    "Id": "ac96473f-e01d-4682-bad3-af153b62e972",
+    "Title": "string",
+    "Description": "string",
+    "Author": "string",
+    "Year": 1990
+  },
+  {
+    "Id": "248148b7-922f-40ab-a8e1-cbed3d171d7d",
+    "Title": "The Pragmatic Programmer",
+    "Description": "A classic book on software development.",
+    "Author": "Andrew Hunt \u0026 David Thomas",
+    "Year": 1999
+  },
+  {
+    "Id": "fbda02b8-e34a-401d-b006-64dec3e7a440",
+    "Title": "Pen \u0026 ink sketching 2nd edition",
+    "Description": "Teach all the basics about sketching with pen",
+    "Author": "William a",
+    "Year": 2026
+  },
+  {
+    "Id": "2624f340-7928-4abd-bbfa-6249e4da676f",
+    "Title": "string",
+    "Description": "string",
+    "Author": "string",
+    "Year": 2002
+  }
 ]

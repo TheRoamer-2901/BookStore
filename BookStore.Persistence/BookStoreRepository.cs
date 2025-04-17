@@ -16,8 +16,10 @@ public class BookStoreRepository : IBookStoreRepository
         _filePath = config.Value.FilePath;
     }
     
-    public async Task AddAsync(IList<Book> books, CancellationToken cancellationToken = default)
+    public async Task AddAsync(Book book, CancellationToken cancellationToken = default)
     {
+        var books = await GetAllAsync(cancellationToken);
+        books.Add(book);
         await WriteBooksToFileAsync(books, TempFilePath, cancellationToken);
         OverwriteRootFile(_filePath, TempFilePath);
     }
@@ -32,14 +34,18 @@ public class BookStoreRepository : IBookStoreRepository
         }, cancellationToken);
     }
 
-    public async Task UpdateAsync(IList<Book> updatedBooks, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(Book bookToUpdate, CancellationToken cancellationToken = default)
     {
-        await WriteBooksToFileAsync(updatedBooks, TempFilePath, cancellationToken);
+        var books = await GetAllAsync(cancellationToken);
+        books = books.Select(b => b.Id == bookToUpdate.Id ? bookToUpdate : b).ToList();
+        await WriteBooksToFileAsync(books, TempFilePath, cancellationToken);
         OverwriteRootFile(_filePath, TempFilePath);
     }
 
-    public async Task DeleteAsync(IList<Book> books, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Book bookToDelete, CancellationToken cancellationToken = default)
     {
+        var books = await GetAllAsync(cancellationToken);
+        books = books.Where(b => b.Id != bookToDelete.Id).ToList();
         await WriteBooksToFileAsync(books, TempFilePath, cancellationToken);
         OverwriteRootFile(_filePath, TempFilePath);
     }

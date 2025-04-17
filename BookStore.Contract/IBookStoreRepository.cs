@@ -4,9 +4,9 @@ namespace BookStore.Contract;
 
 public interface IBookStoreRepository
 {
-    Task AddAsync(IList<Book> books, CancellationToken cancellationToken = default);
-    Task UpdateAsync(IList<Book> updatedBooks, CancellationToken cancellationToken = default);
-    Task DeleteAsync(IList<Book> books, CancellationToken cancellationToken = default);
+    Task AddAsync(Book book, CancellationToken cancellationToken = default);
+    Task UpdateAsync(Book bookToUpdate, CancellationToken cancellationToken = default);
+    Task DeleteAsync(Book bookToDelete, CancellationToken cancellationToken = default);
     Task<Book?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<IList<Book>> GetAllAsync(CancellationToken cancellationToken = default);
 }
