@@ -11,6 +11,7 @@ public static class ModuleRegistration
     {
         services.AddLoggingConfig(configuration);
         services.AddMappings();
+        services.AddCache(configuration);
         return services;
     }
 
@@ -27,5 +28,17 @@ public static class ModuleRegistration
     private static void AddMappings(this IServiceCollection services)
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
+    }
+    
+    private static void AddCache(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddMemoryCache(options =>
+        {
+            var sizeLimit = configuration.GetValue<long?>("CacheConfig:SizeLimit");
+            if (sizeLimit.HasValue)
+            {
+                options.SizeLimit = sizeLimit;
+            }        
+        });
     }
 }
