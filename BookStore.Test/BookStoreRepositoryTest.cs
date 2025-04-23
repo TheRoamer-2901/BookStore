@@ -18,7 +18,7 @@ public class BookStoreRepositoryTests
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        _testRootFilePath = @"D:\projects\BookStore\BookStore.Test\books.test.json";
+        _testRootFilePath = $@"{Environment.CurrentDirectory}\books.test.json";
         _testFilePath = _testRootFilePath.Replace(".json", ".tmp.json");
         _config = new OptionsWrapper<BookStoreConfig>(new BookStoreConfig { FilePath = _testFilePath });
         _books =

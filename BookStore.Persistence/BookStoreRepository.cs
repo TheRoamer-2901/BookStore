@@ -13,7 +13,7 @@ public class BookStoreRepository : IBookStoreRepository
 
     public BookStoreRepository(IOptions<BookStoreConfig> config)
     {
-        _filePath = config.Value.FilePath;
+        _filePath = Path.Combine(PathUtils.ProjectRootPath(), config.Value.FilePath);
     }
     
     public async Task AddAsync(Book book, CancellationToken cancellationToken = default)
